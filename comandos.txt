@@ -1,0 +1,93 @@
+docker compose up -d
+docker exec -it mongo_escola mongosh
+
+use escola
+
+db.createCollection("alunos")
+
+db.alunos.insertMany([
+  {
+    nome: "João Silva",
+    idade: 20,
+    curso: "ADS",
+    notas: [7, 8, 0],
+    endereco: {
+      cidade: "Maricá",
+      estado: "RJ"
+    }
+  },
+  {
+    nome: "Maria Souza",
+    idade: 22,
+    curso: "ADS",
+    notas: [9, 10, 0],
+    endereco: {
+      cidade: "Niterói",
+      estado: "RJ"
+    }
+  },
+  {
+    nome: "Carlos Lima",
+    idade: 23,
+    curso: "SI",
+    notas: [6, 7, 8],
+    endereco: {
+      cidade: "São Gonçalo",
+      estado: "RJ"
+    }
+  },
+  {
+    nome: "Ana Costa",
+    idade: 21,
+    curso: "ADS",
+    notas: [10, 9, 8],
+    endereco: {
+      cidade: "Itaboraí",
+      estado: "RJ"
+    }
+  },
+  {
+    nome: "Pedro Rocha",
+    idade: 24,
+    curso: "CC",
+    notas: [5, 6, 7],
+    endereco: {
+      cidade: "Rio de Janeiro",
+      estado: "RJ"
+    }
+  }
+])
+
+db.alunos.find()
+
+db.alunos.find({ curso: "ADS" })
+db.alunos.find({ idade: { $gt: 21 } })
+db.alunos.updateOne(
+  { nome: "João Silva" },
+  { $set: { idade: 21 } }
+)
+
+db.alunos.updateOne(
+  { nome: "Ana Costa" },
+  { $push: { notas: 10 } }
+)
+
+db.alunos.deleteOne({ nome: "Pedro Rocha" })
+
+db.alunos.aggregate([
+  {
+    $project: {
+      nome: 1,
+      media: { $avg: "$notas" }
+    }
+  }
+])
+
+db.alunos.aggregate([
+  {
+    $group: {
+      _id: "$curso",
+      quantidade: { $sum: 1 }
+    }
+  }
+])
